@@ -1,9 +1,19 @@
-FROM tomcat:10
+FROM node:16-alpine
 
-LABEL maintainer="hippo"
+WORKDIR /app
 
-ADD **/*.master /usr/local/tomcat/webapps/
+COPY package*.json ./
 
-EXPOSE 8080
+RUN npm install
 
-CMD ["catalina.sh", "run"]
+COPY . .
+
+RUN npm run build
+
+RUN npm install -g serve
+
+ENV PORT=3000
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "build", "-l", "3000"]
